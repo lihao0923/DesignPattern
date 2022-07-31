@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #dialog {
+            width: 500px;
+            height: 300px;
+            border: 1px solid #333;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            background-color: #fff;
+            font-family: Arial, Helvetica, sans-serif;
+            display: none;
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            height: 20px;
+            background-color: lightblue;
+            padding: 10px;
+        }
+
+        .top span {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            line-height: 20px;
+
+        }
+
+        .content {
+            height: 220px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btns {
+            height: 40px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            background-color: lightblue;
+        }
+
+        .btns button {
+            padding: 4px 25px;
+            margin-left: 20px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="dialog">
+        <div class="top">
+            标题
+            <span>X</span>
+        </div>
+        <div class="content">
+            <p>提示内容</p>
+        </div>
+        <div class="btns">
+            <button>确定</button>
+            <button>取消</button>
+        </div>
+    </div>
+    <script>
+        /***
+         * 自定义弹出层
+        */
+
+        const Dialog = (function () {
+            class Dialog {
+                constructor() {
+                    this.ele = document.createElement('div');
+                    this.ele.id = 'dialog';
+                    document.body.appendChild(this.ele);
+
+                    this.callback = function() {};
+                    this.bindEvent();
+                }
+
+                setContent(txt) {
+                    this.ele.innerHTML = `
+                    <div class="top">
+                        标题
+                        <span class="close">X</span>
+                    </div>
+                    <div class="content">
+                        <p>${txt}</p>
+                    </div>
+                    <div class="btns">
+                        <button class="ok">确定</button>
+                        <button class="cancel">取消</button>
+                    </div>
+                `;
+
+                    this.ele.style.display = 'block';
+                }
+
+
+                bindEvent() {
+                    this.ele.addEventListener('click', e => {
+                        e = e || window.event;
+
+                        const target = e.target || e.srcElement;
+                        if (target.className === 'close') {
+                            this.ele.style.display = 'none';
+                            this.callback(false);
+                        }
+
+                        if (target.className === 'cancel') {
+                            console.log('cancel');
+                            this.ele.style.display = 'none';
+                            this.callback(false);
+                        }
+
+                        if (target.className === 'ok') {
+                            console.log('ok');
+                            this.callback(true);
+                        }
+                    })
+                }
+            }
+        
+            let instance = null;
+
+            return function singleton(txt, cb) {
+                if(!instance) {
+                    instance = new Dialog();
+                }
+
+                instance.setContent(txt);
+                instance.callback = cb || function() {};
+
+                return instance;
+            }
+        })()
+
+        const d1 = new Dialog('hello world!', function a(res) {
+            console.log('res:', res);
+        });
+        const d2 = new Dialog('哎呦，卧槽!', function b(res) {
+            console.log('res:', res);
+        });
+    </script>
+</body>
+
+</html>
