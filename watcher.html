@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+   <h1>观察者模式</h1>
+   <script>
+
+    class Observer {
+        constructor(name, fn = () => {}) {
+            this.name = name;
+            this.fn = fn
+        }
+    }
+
+    const teacher = new Observer('老师', (state) => { console.log('因为' + state +  '所以把你家长叫过来！') });
+    const headteacher = new Observer('班主任', (state) => { console.log('因为' + state +  '所以把你老师叫过来！') });
+    const president = new Observer('校长', (state) => { console.log('因为' + state +  '所以把你班主任叫过来！') });
+
+    // console.log(teacher, president);
+
+
+    class Student {
+        constructor(state) {
+            this.state = state;
+            this.observers = [];
+
+        }
+
+        setState(val) {
+            this.state = val;
+
+            this.observers.forEach((item) => {
+                item.fn(this.state);
+            })
+        }
+
+        addObserver(observer) {
+            this.observers = this.observers.filter((item) => {
+                return item.name !== observer.name;
+            })
+
+            this.observers.push(observer);
+        }
+
+        removeObserver(observer) {
+            this.observers = this.observers.filter((item) => {
+                return item.name !== observer.name;
+            })
+        }
+    }
+
+    const Jack = new Student('学习');
+    Jack.addObserver(teacher);
+    Jack.addObserver(headteacher);
+    Jack.addObserver(president);
+
+    Jack.removeObserver(president);
+    console.log(Jack);
+
+
+   </script>
+</body>
+</html>
