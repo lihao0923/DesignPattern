@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>发布订阅模式</h1>
+    <script>
+        /**
+         * 发布订阅模式
+        */
+
+        class Observer {
+            constructor() {
+                this.message = {};
+            }
+
+            on(type, fn) {
+                if(!this.message[type]) {
+                    this.message[type] = [];
+                }
+
+                this.message[type].push(fn);
+            }
+
+            off(type, fn) {
+                if(!fn) {
+                    delete this.message[type];
+                    return;
+                }
+
+                if(!this.message[type]) return;
+
+                this.message[type] = this.message[type].filter(item => item !== fn);
+            }
+
+            trigger(type) {
+                if(!this.message[type]) return;
+
+                this.message[type].forEach(item => {
+                    item();
+                });
+            }
+        }
+
+
+
+        const person1 = new Observer();
+        person1.on('aaa', handlerA);
+        person1.on('aaa', handlerB);
+        person1.on('bbb', handlerC);
+        person1.on('bbb', handlerD);
+
+        person1.off('aaa', handlerA);
+
+        person1.trigger('bbb');
+        
+        console.log(person1);
+
+        function handlerA() { console.log('handlerA') }
+        function handlerB() { console.log('handlerB') }
+        function handlerC() { console.log('handlerC') }
+        function handlerD() { console.log('handlerD') }
+
+
+    </script>
+</body>
+</html>
